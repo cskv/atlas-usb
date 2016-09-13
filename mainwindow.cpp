@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionQuit->setEnabled(true);
 
 // make all connections //initActionsConnections in Terminal example
-    connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(openSerialPort2()));
+    //connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(openSerialPort2()));
     connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionConfigure, SIGNAL(triggered()), sd, SLOT(show()));
@@ -72,6 +72,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //connect( sd, SIGNAL(accepted()),
              //this, SLOT(openSerialPort2()) );
 
+}
+
+void MainWindow::on_actionConnect_triggered()
+{
+    openSerialPort2();
+    pH1Frame->on_btnInfo_clicked();
 }
 
 void MainWindow::setupEZOFrames()
@@ -130,13 +136,30 @@ void MainWindow::writeData(const QByteArray &data)
 
 void MainWindow::displayAllMeas()
 { 
+    QATLASUSB::AtlasUSBProperties pr = pH1Frame->stamp->getUsbProps();
     double dval = 0;
-    if (pH1Frame->stamp->getUsbProps().probeType == "pH") {
-        dval = pH1Frame->stamp->getUsbProps().currentpH;
-        if (dval > 0 && dval < 14) ui->pH1Label->setText(QString::number(dval, 'f', 2 ));
-    } else if (pH1Frame->stamp->getUsbProps().probeType == "ORP") {
-        dval = pH1Frame->stamp->getUsbProps().currentORP;
-        if (dval > -1021 && dval < 1021) ui->pH1Label->setText(QString::number(dval, 'f', 1 ) + " mV");
+    QString pt = pr.probeType;
+
+    if ( !ui->EZOLabel->text().startsWith(pt) ) {
+        ui->EZOLabel->setText(pt);
+        if (pt == "pH"){
+            //ui->EZOLabel->setStyleSheet("QLabel {color : red;}");
+            //ui->tabWidget->setTabIcon(1, *(new QIcon(":/new/images/images/ph-circuit-large.jpg")));
+        } else if (pt == "ORP"){
+            ui->EZOLabel->setStyleSheet("QLabel {color : blue;}");
+            ui->tabWidget->setTabIcon(1, *(new QIcon(":/new/images/images/orp-circuit-large.jpg")));
+        } else if (pt == "EC"){
+            ui->EZOLabel->setStyleSheet("QLabel {color : green;}");
+            ui->tabWidget->setTabIcon(1, *(new QIcon(":/new/images/images/ec-circuit-large.jpg")));
+        }
+    }
+
+    if (pt == "pH") {
+        dval = pr.currentpH;
+        if (dval > 0 && dval < 14) ui->valueLabel->setText(QString::number(dval, 'f', 2 ));
+    } else if (pt == "ORP") {
+        dval = pr.currentORP;
+        if (dval > -1021 && dval < 1021) ui->valueLabel->setText(QString::number(dval, 'f', 1 ) + " mV");
     }
     pf->realtimeTentacleSlot(dval);
 }
@@ -223,3 +246,4 @@ void MainWindow::on_actionAbout_Qt_triggered()
 {
     qApp->aboutQt();
 }
+

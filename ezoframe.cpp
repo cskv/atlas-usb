@@ -72,21 +72,23 @@ void EZOFrame::displayLedState()
 
 void EZOFrame::displayInfo()
 {
-    double dval = stamp->getUsbProps().acidSlope;
+    QATLASUSB::AtlasUSBProperties pr = stamp->getUsbProps();
+
+    double dval = pr.acidSlope;
     if (dval > 0) ui->acidSlopeLabel->setText(QString::number(dval));
-    dval = stamp->getUsbProps().basicSlope;
+    dval = pr.basicSlope;
     if (dval > 0) ui->basicSlopeLabel->setText(QString::number(dval));
 
-    ui->probeLabel->setText(stamp->getUsbProps().probeType);
-    ui->versionLabel->setText(stamp->getUsbProps().version);
+    ui->probeLabel->setText(pr.probeType);
+    ui->versionLabel->setText(pr.version);
 
-    ui->rstLabel->setText(stamp->getUsbProps().rstCode);
-    dval = stamp->getUsbProps().voltage;
+    ui->rstLabel->setText(pr.rstCode);
+    dval = pr.voltage;
     if (dval > 0) ui->voltLabel->setText(QString::number(dval));
 
-    dval = stamp->getUsbProps().currentTemp;
+    dval = pr.currentTemp;
     if (dval > 0) ui->leTemp->setText(QString::number(dval , 'f', 1 ));
-    int ival = stamp->getUsbProps().calState;
+    int ival = pr.calState;
     if (ival > -1) ui->calLabel->setText(QString::number(ival));
 
     //ui->leI2CAddress->setText(QString::number(stamp->getI2cAddress()));
@@ -94,13 +96,25 @@ void EZOFrame::displayInfo()
 
 void EZOFrame::displayMeas()
 {
-    double dval;
-    if (stamp->getUsbProps().probeType == "pH") {
-        dval = stamp->getUsbProps().currentpH;
-        if (dval > 0 && dval < 14) ui->pHLabel->setText(QString::number(dval, 'f', 2 ));
-    } else if (stamp->getUsbProps().probeType == "ORP") {
-        dval = stamp->getUsbProps().currentORP;
-        if (dval > -1021 && dval < 1021) ui->pHLabel->setText(QString::number(dval, 'f', 1 ) + " mV");
+    QATLASUSB::AtlasUSBProperties pr = stamp->getUsbProps();
+    double dval = 0;
+    QString pt = pr.probeType;
+
+    if ( !ui->EZOLabel->text().startsWith(pt) ) {
+        ui->EZOLabel->setText(pt);
+        if (pt == "pH"){
+            ui->EZOLabel->setStyleSheet("QLabel {color : red;}");
+        } else if (pt == "ORP"){
+            ui->EZOLabel->setStyleSheet("QLabel {color : blue;}");
+        }
+    }
+
+    if (pt == "pH") {
+        dval = pr.currentpH;
+        if (dval > 0 && dval < 14) ui->valueLabel->setText(QString::number(dval, 'f', 2 ));
+    } else if (pt == "ORP") {
+        dval = pr.currentORP;
+        if (dval > -1021 && dval < 1021) ui->valueLabel->setText(QString::number(dval, 'f', 1 ) + " mV");
     }
 }
 

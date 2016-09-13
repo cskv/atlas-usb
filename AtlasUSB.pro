@@ -65,7 +65,7 @@ FORMS += \
     serialdialog.ui
 
 RESOURCES += \
-     atlasusb.qrc
+    atlasusb.qrc
 
 CONFIG += c++11
 CONFIG += warn_on

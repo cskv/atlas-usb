@@ -695,7 +695,7 @@ color: lime;
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="pHLabel">
+  <widget class="QLabel" name="valueLabel">
    <property name="geometry">
     <rect>
      <x>160</x>
@@ -791,12 +791,12 @@ color: orange;
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="EZOLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>20</x>
      <y>304</y>
-     <width>91</width>
+     <width>131</width>
      <height>61</height>
     </rect>
    </property>

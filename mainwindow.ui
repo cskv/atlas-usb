@@ -39,7 +39,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="iconSize">
      <size>
@@ -60,7 +60,7 @@
      <attribute name="title">
       <string>Main</string>
      </attribute>
-     <widget class="QLabel" name="label_1">
+     <widget class="QLabel" name="EZOLabel">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -86,7 +86,7 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QLabel" name="pH1Label">
+     <widget class="QLabel" name="valueLabel">
       <property name="geometry">
        <rect>
         <x>170</x>
