@@ -47,6 +47,7 @@ public:
 
 public slots:
     void realtimeTentacleSlot(double value0);
+    void realtimeUSBSlot(double value);
 
 private slots:
     void setupPlot();

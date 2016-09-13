@@ -233,3 +233,32 @@ void PlotFrame::realtimeTentacleSlot(double value0)
     ui->customPlot->xAxis->setRange(key+2, 120, Qt::AlignRight);
     ui->customPlot->replot();
 }
+
+void PlotFrame::realtimeUSBSlot(double value)
+{
+// calculate two new data points:
+    double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+
+    //value = value + (rand() % 100)/1000.0;
+
+// add data to lines:
+    ui->customPlot->graph(0)->addData(key, value);
+
+// set data of dots:
+    ui->customPlot->graph(2)->clearData();
+    ui->customPlot->graph(2)->addData(key, value);
+
+// remove data of lines that's outside visible range:
+    ui->customPlot->graph(0)->removeDataBefore(key-120);
+
+// rescale value (vertical) axis to fit the current data:
+    ui->customPlot->yAxis->setRange(-1000, 1000);
+
+    //ui->customPlot->graph(0)->rescaleValueAxis();
+    //ui->customPlot->graph(1)->rescaleValueAxis(true);
+
+// make key axis range scroll with the data (at a constant range size of 120):
+    ui->customPlot->xAxis->setRange(key+2, 120, Qt::AlignRight);
+
+    ui->customPlot->replot();
+}

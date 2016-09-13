@@ -161,7 +161,7 @@ void MainWindow::displayAllMeas()
         dval = pr.currentORP;
         if (dval > -1021 && dval < 1021) ui->valueLabel->setText(QString::number(dval, 'f', 1 ) + " mV");
     }
-    pf->realtimeTentacleSlot(dval);
+    pf->realtimeUSBSlot(dval);
 }
 
 void MainWindow::readAtlasUSBData()
