@@ -85,8 +85,6 @@ private slots:
     void on_actionScreenshot_triggered();
     void setupEZOFrames();
 
-    void on_mainTimer();
-
     void on_actionAbout_AtlasTerminal_triggered();
 
     void on_actionAbout_Qt_triggered();
@@ -102,14 +100,11 @@ private:
     QByteArray serialbuffer;
 
     EZOFrame* pH1Frame;
-
     PlotFrame* pf;
 
-    QTimer* mainTimer;
     //QTimer* delayTimer;
 
     AtlasDialog* ad;
-    //About* aboutAtlas;
 
     QCPPlotTitle* plotTitle;
 };

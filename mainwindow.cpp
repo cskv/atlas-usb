@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ad = new AtlasDialog(this);
-    //aboutAtlas = new About(this);
 
     pf = new PlotFrame(ui->centralWidget);
     pf->move(560,20);
@@ -47,8 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
     serial = new QSerialPort(this);
     sd = new SerialDialog(this);
 
-    mainTimer = new QTimer(this);
-    //mainTimer->start(1000);
     //delayTimer->setSingleShot(true);
 
     ui->actionQuit->setEnabled(true);
@@ -63,14 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)),
             this, SLOT(handleError(QSerialPort::SerialPortError)));
 
-    //connect(serial, SIGNAL(readyRead()),
-    //        this, SLOT(readTentacleI2CData()));
-
     connect(serial, SIGNAL(readyRead()),
             this, SLOT(readAtlasUSBData2()));
-
-    connect(mainTimer, SIGNAL(timeout()),
-            this, SLOT(on_mainTimer()));
 
     pH1Frame = new EZOFrame(ui->EZOTab);
 
@@ -95,11 +86,6 @@ MainWindow::~MainWindow()
 {
     //delete sd;
     delete ui;
-}
-
-void MainWindow::on_mainTimer()
-{
-   // pH1Frame->on_btnReadMeas_clicked();
 }
 
 void MainWindow::openSerialPort2()
@@ -144,7 +130,7 @@ void MainWindow::writeData(const QByteArray &data)
 
 void MainWindow::displayAllMeas()
 { 
-    double dval;
+    double dval = 0;
     if (pH1Frame->stamp->getUsbProps().probeType == "pH") {
         dval = pH1Frame->stamp->getUsbProps().currentpH;
         if (dval > 0 && dval < 14) ui->pH1Label->setText(QString::number(dval, 'f', 2 ));
