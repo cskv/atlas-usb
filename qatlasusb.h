@@ -54,6 +54,7 @@ struct AtlasUSBProperties {
     int     calState = -1;        /**< Calibration state: 0,1,2,3 (uncal, mid, low, high) */
     double  acidSlope = 0.0;      /**< Calibration slope pH < 7 */
     double  basicSlope = 0.0;     /**< Calibration slope pH > 7  */
+    QString name = "Stamp";       /**< string to give device a name */
     QString probeType = "";       /**< pH, ORP, EC or DO */
     QString version = "";         /**< firmware version */
     QString rstCode = "";         /**< Reset code */

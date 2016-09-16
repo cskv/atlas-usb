@@ -267,7 +267,9 @@ QByteArray QATLASUSB::readName()
  */
 QByteArray QATLASUSB::writeName(QString name)
 {
-    QByteArray cmd= "NAME,Dev_1\r";
+    QByteArray cmd= "NAME,";
+    cmd.append(name);       //implicit conversion to UTF8 by overloaded function
+    cmd.append("\r");
     lastAtlasUSBCmd = cmd;
     return cmd;
 }
@@ -407,7 +409,7 @@ void QATLASUSB::parseAtlasUSB(QByteArray atlasdata)
             t = atlasdata.mid(6,4);
             usbProps.version = QString(t);
         } else {
-            t = atlasdata.mid(3,3);// EZO "ORP" stamp
+            t = atlasdata.mid(3,3);              // EZO "ORP" stamp
             usbProps.probeType = QString(t);
             t = atlasdata.mid(7,4);
             usbProps.version = QString(t);
@@ -418,6 +420,10 @@ void QATLASUSB::parseAtlasUSB(QByteArray atlasdata)
         usbProps.rstCode = t;
         t = atlasdata.mid(10,5);
         usbProps.voltage = t.toDouble();
+        emit infoRead();
+    } else  if ( atlasdata.startsWith("?NAME,") ) {
+        t = atlasdata.mid(6,8);
+        usbProps.name = QString(t);
         emit infoRead();
     } else {
         t = atlasdata.mid(0,7);     // pH: 6 bytes ORP: 7 bytes max

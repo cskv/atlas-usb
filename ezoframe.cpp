@@ -84,6 +84,7 @@ void EZOFrame::displayInfo()
     dval = pr.basicSlope;
     if (dval > 0) ui->basicSlopeLabel->setText(QString::number(dval));
 
+    ui->leName->setText(pr.name);
     ui->probeLabel->setText(pr.probeType);
     ui->versionLabel->setText(pr.version);
 
