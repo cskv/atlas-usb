@@ -65,6 +65,11 @@ void EZOFrame::updateInfo()
     ui->btnCal->click();
 }
 
+void EZOFrame::displayBaudrate()
+{
+    ui->leBaud->setText(QString::number(stamp->getUsbProps().baud));
+}
+
 void EZOFrame::displayLedState()
 {
     ui->stateLed->setState(stamp->getUsbProps().ledState);
@@ -248,5 +253,23 @@ void EZOFrame::on_btnI2CAddr_clicked()
 void EZOFrame::on_respCB_clicked(bool checked)
 {
     lastCmd = stamp->writeResponse(checked);
+    emit cmdAvailable(lastCmd);
+}
+
+void EZOFrame::on_btnBaud_clicked()
+{
+    lastCmd = stamp->changeSerial(ui->leBaud->text().toInt());
+    emit cmdAvailable(lastCmd);
+}
+
+void EZOFrame::on_btnSetName_clicked()
+{
+    lastCmd = stamp->writeName(ui->leName->text());
+    emit cmdAvailable(lastCmd);
+}
+
+void EZOFrame::on_btnGetName_clicked()
+{
+    lastCmd = stamp->readName();
     emit cmdAvailable(lastCmd);
 }

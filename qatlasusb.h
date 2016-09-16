@@ -59,11 +59,18 @@ struct AtlasUSBProperties {
     QString rstCode = "";         /**< Reset code */
     double  voltage = 0;          /**< supply voltage EZO stamp */
     qint8   i2cAddress = -1;      /**< 7-bits I2C address (1..127)  */
+    int     baud = 9600;          /**< baudrate of virtual serial port to EZO stamp */
+    bool    isConnectedAsSerial = true;          /**< serial or I2C */
     } ;
+
+
+void setBaud(const int &value);
+void setAsSerial(const bool &value);
 
 public slots:
 // Getters and Setters
-    AtlasUSBProperties getUsbProps() const;
+AtlasUSBProperties getUsbProps() const;
+
 
 public slots:
 // Atlas Scientific commands

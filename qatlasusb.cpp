@@ -431,6 +431,16 @@ void QATLASUSB::parseAtlasUSB(QByteArray atlasdata)
     }
 }
 
+void QATLASUSB::setBaud(const int &value)
+{
+    usbProps.baud = value;
+}
+
+void QATLASUSB::setAsSerial(const bool &value)
+{
+    usbProps.isConnectedAsSerial = value;
+}
+
 QATLASUSB::AtlasUSBProperties QATLASUSB::getUsbProps() const
 {
     return usbProps;

@@ -57,6 +57,7 @@ public slots:
         void on_btnReadMeas_clicked();
         void on_contCB_clicked(bool checked);
         void on_btnInfo_clicked();
+        void displayBaudrate();
 
 signals:
     void cmdAvailable(QByteArray newCommand);
@@ -89,6 +90,12 @@ private slots:
     void on_btnI2CAddr_clicked();
 
     void on_respCB_clicked(bool checked);
+
+    void on_btnBaud_clicked();
+
+    void on_btnSetName_clicked();
+
+    void on_btnGetName_clicked();
 
 private:
     Ui::EZOFrame *ui;

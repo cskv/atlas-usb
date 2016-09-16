@@ -32,6 +32,7 @@
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPort>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -39,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ad = new AtlasDialog(this);
-
     pf = new PlotFrame(ui->centralWidget);
     pf->move(560,20);
 
@@ -67,11 +67,54 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setupEZOFrames();
 
+// read inifile
+    //m_sSettingsFile = QApplication::applicationDirPath() + "/SolTraQSettings.ini";
+    m_sSettingsFile = QApplication::applicationDirPath() + "/" + QApplication::applicationName() + ".ini";
+    qDebug() << m_sSettingsFile;
+    loadSettings();
+
     sd->setModal(true);
     sd->show();
     //connect( sd, SIGNAL(accepted()),
              //this, SLOT(openSerialPort2()) );
 
+}
+
+void MainWindow::loadSettings()
+{
+    QSettings qs(m_sSettingsFile, QSettings::IniFormat);
+    //traqSettings.setPath();
+    QString sText = qs.value("text", "hallo").toString();
+    sText = qs.value("text", "hallo").toString();
+    sText = qs.value("text", "hallo").toString();
+
+    qs.beginGroup("Form");
+    sText = qs.value("Top", "100.0").toString();
+    sText = qs.value("Left", "100.0").toString();
+    qs.endGroup();
+
+    qs.beginGroup("Stamp1");
+    pH1Frame->stamp->setAsSerial(qs.value("Serial", "true").toBool());
+    pH1Frame->stamp->setBaud(qs.value("Baud", "9600").toInt());
+    pH1Frame->displayBaudrate();
+    qs.endGroup();
+
+    qDebug() << pH1Frame->stamp->getUsbProps().baud;
+
+    //qs.beginGroup("Tentacle");
+    //stepwin->setMainDir(qs.value("Baud", "9600").toInt());
+   // sText = qs.value("frequency", "100.0").toString();
+    //qs.endGroup();
+
+}
+
+void MainWindow::saveSettings()
+{
+    QSettings settings(m_sSettingsFile, QSettings::IniFormat);
+    //QString sText = ui->settingsEdit->text();
+    //settings.setValue("text", sText);
+
+    //ui->settingsLabel->setText(sText);
 }
 
 void MainWindow::on_actionConnect_triggered()
@@ -162,26 +205,6 @@ void MainWindow::displayAllMeas()
         if (dval > -1021 && dval < 1021) ui->valueLabel->setText(QString::number(dval, 'f', 1 ) + " mV");
     }
     pf->realtimeUSBSlot(dval);
-}
-
-void MainWindow::readAtlasUSBData()
-{
-    while(serial->canReadLine()) {
-        QByteArray serialdata = serial->readLine();
-//reads in data line by line, separated by \n or \r characters
-        qDebug() << serialdata;
-        QByteArray response = serialdata.trimmed();
-
-        if ( response.contains("OK") ) ui->statusBar->showMessage("Success");
-        else if ( response.contains("*ER") ) ui->statusBar->showMessage("Unknown Command");
-        else if ( response.contains("*OV") ) ui->statusBar->showMessage("Over Voltage");
-        else if ( response.contains("*UV") ) ui->statusBar->showMessage("Under Voltage");
-        else if ( response.contains("*RS") ) ui->statusBar->showMessage("Device Reset");
-        else if ( response.contains("*RE") ) ui->statusBar->showMessage("Boot up Completed");
-        else if ( response.contains("*SL") ) ui->statusBar->showMessage("Device Asleep");
-        else if ( response.contains("*WA") ) ui->statusBar->showMessage("Device Woken Up");
-        else pH1Frame->stamp->parseAtlasUSB(response);
-    }
 }
 
 void MainWindow::readAtlasUSBData2()

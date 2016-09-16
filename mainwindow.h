@@ -72,7 +72,6 @@ private slots:
 
     void writeData(const QByteArray &data);
 
-    void readAtlasUSBData();
     void readAtlasUSBData2();
 
     void on_action_Help_Tentacle_triggered();
@@ -91,11 +90,17 @@ private slots:
 
     void on_actionConnect_triggered();
 
+    // functions for QSettings  and use of inifiles
+        void loadSettings();
+        void saveSettings();
+
 private:
     Ui::MainWindow *ui;
+
+    QString m_sSettingsFile;
+
     LedIndicator* ledStateLed;
 
-    //SettingsDialog *settings;
     SerialDialog* sd;
     QSerialPort *serial;
     QByteArray lastCmd;
