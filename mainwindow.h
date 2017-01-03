@@ -29,7 +29,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtCore/QtGlobal>
+//#include <QtCore/QtGlobal>
 
 #include <QMainWindow>
 
@@ -66,33 +66,24 @@ public:
 
 private slots:
     void openSerialPort2();
-
     void closeSerialPort();
     void handleError(QSerialPort::SerialPortError error);
 
     void writeData(const QByteArray &data);
-
     void readAtlasUSBData2();
 
     void on_action_Help_Tentacle_triggered();
-
     void displayAllMeas();
-
     void on_contCB_clicked(bool checked);
-
-
     void on_actionScreenshot_triggered();
     void setupEZOFrames();
-
     void on_actionAbout_AtlasTerminal_triggered();
-
     void on_actionAbout_Qt_triggered();
-
     void on_actionConnect_triggered();
 
-    // functions for QSettings  and use of inifiles
-        void loadSettings();
-        void saveSettings();
+// functions for QSettings  and use of inifiles
+    void loadSettings();
+    void saveSettings();
 
 private:
     Ui::MainWindow *ui;

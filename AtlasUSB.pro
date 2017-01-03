@@ -28,8 +28,8 @@ win32: LIBS += "../$$QCPLIB"
 unix:  LIBS += -L"../" -l$$QCPLIB
 #LIBS += -L"$$_PRO_FILE_PWD_" -l$$QCPLIB
 
-win32: INCLUDEPATH += "D:\Projects_LTD\Qt\qcustomplot"
-unix:  INCLUDEPATH += "/home/pvk/Projects/Qt/qcustomplot"
+#win32: INCLUDEPATH += "D:\Projects_LTD\Qt\qcustomplot"
+#unix:  INCLUDEPATH += "/home/pvk/Projects/Qt/qcustomplot"
 
 SOURCES += \
     main.cpp \
