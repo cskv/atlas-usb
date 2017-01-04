@@ -29,7 +29,6 @@
 #ifndef QATLASUSB_H
 #define QATLASUSB_H
 
-//#include <QtCore>
 #include <QObject>
 
 class QATLASUSB : public QObject

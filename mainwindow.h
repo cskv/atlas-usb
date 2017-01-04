@@ -29,8 +29,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-//#include <QtCore/QtGlobal>
-
 #include <QMainWindow>
 
 #include <QtSerialPort/QSerialPort>

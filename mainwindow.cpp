@@ -29,10 +29,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-//#include "settingsdialog.h"
-
 #include <QMessageBox>
-//#include <QtSerialPort/QSerialPort>
 #include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
