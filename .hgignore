@@ -1,3 +1,5 @@
 syntax: glob
 
-build
+build*
+*.pro.user
+*.dll
