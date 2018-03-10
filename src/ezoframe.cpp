@@ -1,7 +1,7 @@
 /***************************************************************************
 **
 **  This file is part of AtlasTerminal, a host computer GUI for
-**  Atlas Scientific(stamp) stamps
+**  Atlas Scientific(TM) stamps
 **  connected to an Arduino(TM)
 **  with Tentacle (TM) interface shield.
 **  Copyright (C) 2016 Paul JM van Kan

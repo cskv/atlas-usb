@@ -95,7 +95,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="atlasusb.qrc">:/new/arrows/images/1446825729_icon-arrow-down-b.ico</pixmap>
+     <pixmap resource="../atlasusb.qrc">:/new/arrows/images/1446825729_icon-arrow-down-b.ico</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -117,7 +117,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="atlasusb.qrc">:/new/arrows/images/1446825729_icon-arrow-down-b.ico</pixmap>
+     <pixmap resource="../atlasusb.qrc">:/new/arrows/images/1446825729_icon-arrow-down-b.ico</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -993,7 +993,7 @@ color: orange;
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="atlasusb.qrc"/>
+  <include location="../atlasusb.qrc"/>
  </resources>
  <connections/>
 </ui>
