@@ -1,7 +1,0 @@
-syntax: glob
-
-build*
-*.pro.user
-*.dll
-obsolete/
-thirdparty/
