@@ -97,7 +97,7 @@ void MainWindow::loadSettings()
     pH1Frame->displayBaudrate();
     qs.endGroup();
 
-    qDebug() << pH1Frame->stamp->getUsbProps().baud;
+    qDebug() << pH1Frame->stamp->getEZOProps().baud;
 
     //qs.beginGroup("Tentacle");
     //stepwin->setMainDir(qs.value("Baud", "9600").toInt());
@@ -177,7 +177,7 @@ void MainWindow::writeData(const QByteArray &data)
 
 void MainWindow::displayAllMeas()
 { 
-    QATLASUSB::AtlasUSBProperties pr = pH1Frame->stamp->getUsbProps();
+    QAtlasUSB::EZOProperties pr = pH1Frame->stamp->getEZOProps();
     double dval = 0;
     QString pt = pr.probeType;
 

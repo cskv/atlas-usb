@@ -31,20 +31,19 @@
 
 #include <QObject>
 
-class QATLASUSB : public QObject
+class QAtlasUSB : public QObject
 {
     Q_OBJECT
 
 public:
 // Constructors and Destructors
-    explicit QATLASUSB(QObject *parent = 0);
-    ~QATLASUSB();
+    explicit QAtlasUSB(QObject *parent = 0);
+    ~QAtlasUSB();
 
 /** @brief struct containing all parameters and measurement values of EZO stamp.
  *
 */
-
-struct AtlasUSBProperties {
+struct EZOProperties {
     bool    ledState = true;      /**< LED on EZO stamp enabled (true)/disabled (false) */
     double  currentpH = 7.0;      /**< pH measurement */
     double  currentORP = -999.9;  /**< ORP measurement */
@@ -61,28 +60,25 @@ struct AtlasUSBProperties {
     qint8   i2cAddress = -1;      /**< 7-bits I2C address (1..127)  */
     int     baud = 9600;          /**< baudrate of virtual serial port to EZO stamp */
     bool    isConnectedAsSerial = true;          /**< serial or I2C */
-    } ;
+    };
 
+// getters
+    EZOProperties getEZOProps() const;
 
-void setBaud(const int &value);
-void setAsSerial(const bool &value);
-
-public slots:
-// Getters and Setters
-AtlasUSBProperties getUsbProps() const;
-
+// setters
+    void setEZOProps(const EZOProperties &value);
+    void setBaud(const int &value);
+    void setAsSerial(const bool &value);
 
 public slots:
 // Atlas Scientific commands
     QByteArray readLED();
     QByteArray writeLED(bool state);
 
+    QByteArray readpHORP();
+
     QByteArray readTemp();
     QByteArray writeTemp(double temperature);
-
-    QByteArray readpHORP();
-    QByteArray readCont();
-    QByteArray writeCont(bool state);
 
     QByteArray readCal();
     QByteArray dopHCal(int taskid);
@@ -96,6 +92,9 @@ public slots:
     QByteArray changeSerial(int baudrate); // change baudrate in UART mode
     QByteArray factoryReset();
 
+    QByteArray readCont();
+    QByteArray writeCont(bool state);
+
     QByteArray readName();
     QByteArray writeName(QString name);
     QByteArray readResponse();
@@ -106,13 +105,13 @@ public slots:
 
 
 signals:
-    void ledRead(bool state); //class QATLAS moet hiervoor een QOBJECT zijn
-    void infoRead();
+    void ledRead(bool state);
+    void infoRead();          //class QATLAS moet hiervoor een QOBJECT zijn
     void measRead();
 
 private:
-    AtlasUSBProperties usbProps;
-    QByteArray lastAtlasUSBCmd;
+    EZOProperties props;
+    QByteArray lastEZOCmd;
 };
 
 #endif // QATLASUSB_H

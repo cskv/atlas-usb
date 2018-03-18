@@ -2,9 +2,6 @@
 **
 **  This file is part of AtlasTerminal, a host computer GUI for
 **  Atlas Scientific(TM) stamps
-**  connected to an Arduino(TM) with
-**  WhiteBox Labs Tentacle (TM) or Tentacle Mini(TM) interface shield.
-**  or
 **  connected via an Atlas Scientific USB EZO(TM) Carrier Board
 **  Copyright (C) 2016-2018 Paul JM van Kan
 **
@@ -32,12 +29,10 @@
 #define EZOFRAME_H
 
 #include <QFrame>
-
 #include <QTimer>
 
 #include "atlasdialog.h"
 #include "qatlasusb.h"
-#include "ledindicator.h"
 
 namespace Ui {
 class EZOFrame;
@@ -52,7 +47,7 @@ public:
     ~EZOFrame();
 
     QByteArray lastCmd;
-    QATLASUSB* stamp = new QATLASUSB();  // wel even aanmaken !
+    QAtlasUSB* stamp = new QAtlasUSB();  // wel even aanmaken !
 
 public slots:
         void on_btnReadMeas_clicked();
@@ -82,7 +77,6 @@ private slots:
 
     void updateInfo();
 
-    void displayLedState();
     void displayInfo();
     void displayMeas();
 
@@ -100,7 +94,6 @@ private slots:
 
 private:
     Ui::EZOFrame *ui;
-    LedIndicator* ledStateLed;
     QTimer* stampTimer;
 };
 

@@ -36,7 +36,6 @@ SOURCES += \
     src/mainwindow.cpp \
     src/atlasdialog.cpp \
     src/qatlasusb.cpp \
-    thirdparty/ledindicator.cpp \
     src/about.cpp \
     src/ezoframe.cpp \
     src/plotframe.cpp \
@@ -48,7 +47,6 @@ HEADERS += \
     src/mainwindow.h \
     src/atlasdialog.h \
     src/qatlasusb.h \
-    thirdparty/ledindicator.h \
     src/about.h \
     src/ezoframe.h \
     src/plotframe.h \

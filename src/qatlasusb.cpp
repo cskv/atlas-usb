@@ -29,12 +29,12 @@
 #include "qatlasusb.h"
 #include <QtDebug>
 
-QATLASUSB::QATLASUSB(QObject *parent) : QObject(parent)
+QAtlasUSB::QAtlasUSB(QObject *parent) : QObject(parent)
 {
 
 }
 
-QATLASUSB::~QATLASUSB()
+QAtlasUSB::~QAtlasUSB()
 {
 
 }
@@ -68,10 +68,10 @@ PLOCK,x PLOCK,? Locks UART and baud rate/I2C and I2C Address (p.32 ORP-EZO)
  * \code command = readLED(); \endcode
  * EZO response: ?L,x<CR> with x is 0 (LED off) or 1 (LED on)
  */
-QByteArray QATLASUSB::readLED()
+QByteArray QAtlasUSB::readLED()
 {
     QByteArray cmd = "L,?\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 /*!
@@ -85,11 +85,11 @@ QByteArray QATLASUSB::readLED()
  * Atlas function: L,state
  * Response: OK\r (Success)
  */
-QByteArray QATLASUSB::writeLED(bool state)
+QByteArray QAtlasUSB::writeLED(bool state)
 {
     QByteArray cmd;
     state ? cmd = "L,1\r" : cmd = "L,0\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //---------------------------------------------------
@@ -101,10 +101,10 @@ QByteArray QATLASUSB::writeLED(bool state)
  * \code command = readCont(); \endcode
  * EZO response: ?C,x<CR> with x is 0 (data on request) or 1 (cont. data)
  */
-QByteArray QATLASUSB::readCont()
+QByteArray QAtlasUSB::readCont()
 {
     QByteArray cmd = "C,?\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 /*!
@@ -118,12 +118,12 @@ QByteArray QATLASUSB::readCont()
  * Atlas function: C,state
  * Response: OK\r (Success)
  */
-QByteArray QATLASUSB::writeCont(bool state)
+QByteArray QAtlasUSB::writeCont(bool state)
 {
     QByteArray cmd;
     state ? cmd = "C,1\r" : cmd = "C,0\r";
     //qDebug() << cmd;
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //--------------------------------------------------------
@@ -135,11 +135,11 @@ QByteArray QATLASUSB::writeCont(bool state)
  * Atlas function: R
  * Response: Response: OK\rxx.xxx\r with xx.xxx is the measured value e.g. 7.012
  */
-QByteArray QATLASUSB::readpHORP()
+QByteArray QAtlasUSB::readpHORP()
 {
     QByteArray cmd = "R\r";
     qDebug() << cmd;
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //---------------------------------------------------------
@@ -151,10 +151,10 @@ QByteArray QATLASUSB::readpHORP()
  * Atlas function: T,?
  * Response: ?T,xx.xx with xx.xx is the temperature e.g. 25.00
  */
-QByteArray QATLASUSB::readTemp()
+QByteArray QAtlasUSB::readTemp()
 {
     QByteArray cmd = "T,?\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 /**
@@ -165,12 +165,12 @@ QByteArray QATLASUSB::readTemp()
  * Atlas function: T,xx.xx
  * Response: OK\r (Success)
  */
-QByteArray QATLASUSB::writeTemp(double temperature)
+QByteArray QAtlasUSB::writeTemp(double temperature)
 {
     QByteArray cmd = "T,";
     cmd.append(QByteArray::number(temperature, 'f', 2));
     cmd.append("\r");
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //----------------------------------------------
@@ -182,10 +182,10 @@ QByteArray QATLASUSB::writeTemp(double temperature)
  * Atlas function: Cal?
  * Response: ?Cal,x\r with x is 0, 1, 2, 3
  */
-QByteArray QATLASUSB::readCal()
+QByteArray QAtlasUSB::readCal()
 {
     QByteArray cmd = "Cal,?\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 /**
@@ -196,7 +196,7 @@ QByteArray QATLASUSB::readCal()
  * Atlas function: Cal,0 (clear), 1 (pH7), 2 (pH4) or 3 (pH10)
  * Response: OK\r (Success)
  */
-QByteArray QATLASUSB::dopHCal(int taskid)
+QByteArray QAtlasUSB::dopHCal(int taskid)
 {
     QByteArray cmd;
     cmd = "Cal,";
@@ -206,7 +206,7 @@ QByteArray QATLASUSB::dopHCal(int taskid)
             case 2 : cmd += "low,4.00\r";
             case 3 : cmd += "high,10.00\r";
     }
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 /**
@@ -217,12 +217,12 @@ QByteArray QATLASUSB::dopHCal(int taskid)
  * Atlas function: Cal,xxx.x with xxx.x in mV
  * Response: 1
  */
-QByteArray QATLASUSB::doORPCal(double orpRef)
+QByteArray QAtlasUSB::doORPCal(double orpRef)
 {
     QByteArray cmd = "Cal,";
     cmd.append(QByteArray::number(orpRef,'f',1));
     cmd.append("\r");
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //---------------------------------------------------
@@ -235,10 +235,10 @@ QByteArray QATLASUSB::doORPCal(double orpRef)
  * Response: OK\r?SLOPE,xx.x,yyy.y
  * with xx.x is acid slope e.g 99.7, yyy.y is basic slope e.g. 100.3
  */
-QByteArray QATLASUSB::readSlope()
+QByteArray QAtlasUSB::readSlope()
 {
     QByteArray cmd = "SLOPE,?\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //----------------------------------------------------
@@ -251,10 +251,10 @@ QByteArray QATLASUSB::readSlope()
  * Response: ?NAME, ssssss
  * with ssssss is the name of the device (ascii)
  */
-QByteArray QATLASUSB::readName()
+QByteArray QAtlasUSB::readName()
 {
     QByteArray cmd = "NAME,?\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 /**
@@ -265,12 +265,12 @@ QByteArray QATLASUSB::readName()
  * Atlas function: NAME,ssssss
  * Response: OK\r (Success)
  */
-QByteArray QATLASUSB::writeName(QString name)
+QByteArray QAtlasUSB::writeName(QString name)
 {
     QByteArray cmd= "NAME,";
     cmd.append(name);       //implicit conversion to UTF8 by overloaded function
     cmd.append("\r");
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //--------------------------------------------------
@@ -281,10 +281,10 @@ QByteArray QATLASUSB::writeName(QString name)
  * Response: OK\r?I,pH,x.x\r
  * with x.x is firmware version number e.g 1.0
  */
-QByteArray QATLASUSB::readInfo()
+QByteArray QAtlasUSB::readInfo()
 {
     QByteArray cmd = "I\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //---------------------------------------------------
@@ -294,10 +294,10 @@ QByteArray QATLASUSB::readInfo()
  * Atlas function: ?RESPONSE
  * Response: OK\r?RESPONSE,x\r with x is 0 or 1
  */
-QByteArray QATLASUSB::readResponse()
+QByteArray QAtlasUSB::readResponse()
 {
     QByteArray cmd = "RESPONSE,?\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 /**
@@ -306,11 +306,11 @@ QByteArray QATLASUSB::readResponse()
  * Atlas function: RESPONSE,x with x is 0 or 1
  * Response: OK\r
  */
-QByteArray QATLASUSB::writeResponse(bool state)
+QByteArray QAtlasUSB::writeResponse(bool state)
 {
     QByteArray cmd;
     state ? cmd = "RESPONSE,1\r" : cmd = "RESPONSE,0\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //--------------------------------------------------
@@ -321,10 +321,10 @@ QByteArray QATLASUSB::writeResponse(bool state)
  * Response: ?STATUS,x,y.yyy
  * with x is PSBWU, y.yyy supply voltage Vcc
  */
-QByteArray QATLASUSB::readStatus()
+QByteArray QAtlasUSB::readStatus()
 {
     QByteArray cmd = "STATUS\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //-------------------------------------------------
@@ -334,10 +334,10 @@ QByteArray QATLASUSB::readStatus()
  * Atlas function: SLEEP
  * Response: none
  */
-QByteArray QATLASUSB::sleep()
+QByteArray QAtlasUSB::sleep()
 {
     QByteArray cmd = "SLEEP\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 
@@ -350,12 +350,12 @@ QByteArray QATLASUSB::sleep()
  * 1. 300 bps 2. 1200 bps 3. 2400 bps 4. 9600 bps 5. 19200 bps
  * 6. 38400 bps 7. 57600 bps 8. 115200 bps
  */
-QByteArray QATLASUSB::changeSerial(int baudrate)
+QByteArray QAtlasUSB::changeSerial(int baudrate)
 {
     QByteArray cmd = "SERIAL,";
     cmd.append(QByteArray::number(baudrate));
     cmd.append("\r");
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //---------------------------------------
@@ -366,10 +366,10 @@ QByteArray QATLASUSB::changeSerial(int baudrate)
  * Response: issue STATUS query after this command
  * and see if "S" is in the reply
  */
-QByteArray QATLASUSB::factoryReset()
+QByteArray QAtlasUSB::factoryReset()
 {
     QByteArray cmd = "Factory\r";
-    lastAtlasUSBCmd = cmd;
+    lastEZOCmd = cmd;
     return cmd;
 }
 //----------------------------------------------------------------
@@ -378,77 +378,85 @@ QByteArray QATLASUSB::factoryReset()
  *
  * @param atlasdata
  */
-void QATLASUSB::parseAtlasUSB(QByteArray atlasdata)
+void QAtlasUSB::parseAtlasUSB(QByteArray atlasdata)
 {
     QByteArray t;
     qDebug() << atlasdata;
 
     if ( atlasdata.startsWith("?L,") ) {
         t = atlasdata.mid(3,1);
-        usbProps.ledState = (t.toInt() == 1);
-        usbProps.ledState = (t.toInt() != 0);
-        emit ledRead(usbProps.ledState);        //usbProps.ledState = t.toInt;
+        props.ledState = (t.toInt() == 1);
+        props.ledState = (t.toInt() != 0);
+        emit ledRead(props.ledState);        //usbProps.ledState = t.toInt;
     } else if ( atlasdata.startsWith("?T,") ) {
         t = atlasdata.mid(3,5);
-        usbProps.currentTemp = t.toDouble();
+        props.currentTemp = t.toDouble();
         emit infoRead();
     } else if ( atlasdata.startsWith("?CAL,") ) {
         t = atlasdata.mid(5,1);
-        usbProps.calState = t.toInt();
+        props.calState = t.toInt();
         emit infoRead();
     } else if ( atlasdata.startsWith("?SLOPE,") ) {
         t = atlasdata.mid(7,4);
-        usbProps.acidSlope = t.toDouble();
+        props.acidSlope = t.toDouble();
         t = atlasdata.mid(12,6);
-        usbProps.basicSlope = t.toDouble();
+        props.basicSlope = t.toDouble();
         emit infoRead();
     } else if ( atlasdata.startsWith("?I,") ) {
         t = atlasdata.mid(3,2);
         if (t.contains("pH")) {
-            usbProps.probeType = QString(t);     // EZO "pH" stamp
+            props.probeType = QString(t);     // EZO "pH" stamp
             t = atlasdata.mid(6,4);
-            usbProps.version = QString(t);
+            props.version = QString(t);
         } else {
             t = atlasdata.mid(3,3);              // EZO "ORP" stamp
-            usbProps.probeType = QString(t);
+            props.probeType = QString(t);
             t = atlasdata.mid(7,4);
-            usbProps.version = QString(t);
+            props.version = QString(t);
         }
         emit infoRead();
     } else  if ( atlasdata.startsWith("?STATUS,") ) {
         t = atlasdata.mid(8,1);
-        usbProps.rstCode = t;
+        props.rstCode = t;
         t = atlasdata.mid(10,5);
-        usbProps.voltage = t.toDouble();
+        props.voltage = t.toDouble();
         emit infoRead();
     } else  if ( atlasdata.startsWith("?NAME,") ) {
         t = atlasdata.mid(6,8);
-        usbProps.name = QString(t);
+        props.name = QString(t);
         emit infoRead();
     } else {
         t = atlasdata.mid(0,7);     // pH: 6 bytes ORP: 7 bytes max
-        if (usbProps.probeType == "pH") {
-            usbProps.currentpH = t.toDouble();
-            if ( usbProps.currentpH > 0 && usbProps.currentpH < 14 ) emit measRead();
-        } else if (usbProps.probeType == "ORP") {
-            usbProps.currentORP = t.toDouble();
-            if ( usbProps.currentORP > -1021 && usbProps.currentORP < 1021 ) emit measRead();
+        if (props.probeType == "pH") {
+            props.currentpH = t.toDouble();
+            if ( props.currentpH > 0 && props.currentpH < 14 ) emit measRead();
+        } else if (props.probeType == "ORP") {
+            props.currentORP = t.toDouble();
+            if ( props.currentORP > -1021 && props.currentORP < 1021 ) emit measRead();
         }
     }
 }
 
-void QATLASUSB::setBaud(const int &value)
+// Getters and Setters
+QAtlasUSB::EZOProperties QAtlasUSB::getEZOProps() const
 {
-    usbProps.baud = value;
+    return props;
 }
 
-void QATLASUSB::setAsSerial(const bool &value)
+void QAtlasUSB::setEZOProps(const EZOProperties &value)
 {
-    usbProps.isConnectedAsSerial = value;
+    props = value;
 }
 
-QATLASUSB::AtlasUSBProperties QATLASUSB::getUsbProps() const
+void QAtlasUSB::setBaud(const int &value)
 {
-    return usbProps;
+    props.baud = value;
 }
+
+void QAtlasUSB::setAsSerial(const bool &value)
+{
+    props.isConnectedAsSerial = value;
+}
+
+
 

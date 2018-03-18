@@ -4,7 +4,7 @@
 **  Atlas Scientific(TM) stamps
 **  connected to an Arduino(TM)
 **  with Tentacle (TM) interface shield.
-**  Copyright (C) 2016 Paul JM van Kan
+**  Copyright (C) 2016-2018 Paul JM van Kan
 **
 **  AtlasTerminal is free software: you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -35,16 +35,10 @@ EZOFrame::EZOFrame(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->stateLed->setOnColor(Qt::blue);
-    ui->stateLed->setOffColor(Qt::gray);
-    ui->stateLed->setState(true);
-
     stampTimer = new QTimer;
 
     connect(stampTimer, SIGNAL(timeout()), this, SLOT(on_btnReadMeas_clicked()));
 
-    connect( stamp, SIGNAL(ledRead(bool)),
-             this, SLOT(displayLedState()) );
     connect( stamp, SIGNAL(infoRead()),
              this, SLOT(displayInfo()) );
     connect( stamp, SIGNAL(measRead()),
@@ -67,17 +61,12 @@ void EZOFrame::updateInfo()
 
 void EZOFrame::displayBaudrate()
 {
-    ui->leBaud->setText(QString::number(stamp->getUsbProps().baud));
-}
-
-void EZOFrame::displayLedState()
-{
-    ui->stateLed->setState(stamp->getUsbProps().ledState);
+    ui->leBaud->setText(QString::number(stamp->getEZOProps().baud));
 }
 
 void EZOFrame::displayInfo()
 {
-    QATLASUSB::AtlasUSBProperties pr = stamp->getUsbProps();
+    QAtlasUSB::EZOProperties pr = stamp->getEZOProps();
 
     double dval = pr.acidSlope;
     if (dval > 0) ui->acidSlopeLabel->setText(QString::number(dval));
@@ -102,7 +91,7 @@ void EZOFrame::displayInfo()
 
 void EZOFrame::displayMeas()
 {
-    QATLASUSB::AtlasUSBProperties pr = stamp->getUsbProps();
+    QAtlasUSB::EZOProperties pr = stamp->getEZOProps();
     double dval = 0;
     QString pt = pr.probeType;
 
@@ -162,8 +151,8 @@ void EZOFrame::on_btnCal_clicked()
 
 void EZOFrame::on_btnCalClear_clicked()
 {
-    if (stamp->getUsbProps().probeType == "pH") lastCmd = stamp->dopHCal(0);
-    else if (stamp->getUsbProps().probeType == "ORP") lastCmd = stamp->doORPCal(200.0);
+    if (stamp->getEZOProps().probeType == "pH") lastCmd = stamp->dopHCal(0);
+    else if (stamp->getEZOProps().probeType == "ORP") lastCmd = stamp->doORPCal(200.0);
     emit cmdAvailable(lastCmd);
     //serial->write(lastCmd);
     QTimer::singleShot(2000, this, SLOT(on_btnCal_clicked()));
