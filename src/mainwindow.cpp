@@ -49,10 +49,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionQuit->setEnabled(true);
 
 // make all connections //initActionsConnections in Terminal example
-    //connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(openSerialPort2()));
-    connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
-    connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->actionConfigure, SIGNAL(triggered()), sd, SLOT(show()));
+    //connect(ui->actionConnect, SIGNAL(triggered()),
+              //this, SLOT(openSerialPort2()));
+    connect(ui->actionDisconnect, SIGNAL(triggered()),
+            this, SLOT(closeSerialPort()));
+    connect(ui->actionQuit, SIGNAL(triggered()),
+            this, SLOT(close()));
+    connect(ui->actionConfigure, SIGNAL(triggered()),
+            sd, SLOT(show()));
 
 // make other connections (see Terminal example)
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)),
@@ -61,9 +65,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(serial, SIGNAL(readyRead()),
             this, SLOT(readAtlasUSBData2()));
 
-    pH1Frame = new EZOFrame(ui->EZOTab);
+    ezof = new EZOFrame(ui->EZOTab);
 
     setupEZOFrames();
+
+    logf = new LoggingFrame(ui->logTab);
+    //logf->setLogDir("C:/Data");
+    //lf->setLogFile(qs.value("LogFile", "SolTraQ_").toString());
 
 // read inifile
     //m_sSettingsFile = QApplication::applicationDirPath() + "/SolTraQSettings.ini";
@@ -92,12 +100,12 @@ void MainWindow::loadSettings()
     qs.endGroup();
 
     qs.beginGroup("Stamp1");
-    pH1Frame->stamp->setAsSerial(qs.value("Serial", "true").toBool());
-    pH1Frame->stamp->setBaud(qs.value("Baud", "9600").toInt());
-    pH1Frame->displayBaudrate();
+    ezof->stamp->setAsSerial(qs.value("Serial", "true").toBool());
+    ezof->stamp->setBaud(qs.value("Baud", "9600").toInt());
+    ezof->displayBaudrate();
     qs.endGroup();
 
-    qDebug() << pH1Frame->stamp->getEZOProps().baud;
+    qDebug() << ezof->stamp->getEZOProps().baud;
 
     //qs.beginGroup("Tentacle");
     //stepwin->setMainDir(qs.value("Baud", "9600").toInt());
@@ -118,14 +126,14 @@ void MainWindow::saveSettings()
 void MainWindow::on_actionConnect_triggered()
 {
     openSerialPort2();
-    pH1Frame->on_btnInfo_clicked();
+    ezof->on_btnInfo_clicked();
 }
 
 void MainWindow::setupEZOFrames()
 {
-    connect( pH1Frame, SIGNAL(cmdAvailable(QByteArray)),
+    connect( ezof, SIGNAL(cmdAvailable(QByteArray)),
              this, SLOT(writeData(QByteArray)) );
-    connect( pH1Frame->stamp, SIGNAL(measRead()),
+    connect( ezof->stamp, SIGNAL(measRead()),
              this, SLOT(displayAllMeas()) );
 }
 
@@ -171,13 +179,13 @@ void MainWindow::closeSerialPort()
 
 void MainWindow::writeData(const QByteArray &data)
 {
-    qDebug() << data;
+    //qDebug() << data;
     serial->write(data);
 }
 
 void MainWindow::displayAllMeas()
 { 
-    QAtlasUSB::EZOProperties pr = pH1Frame->stamp->getEZOProps();
+    QAtlasUSB::EZOProperties pr = ezof->stamp->getEZOProps();
     double dval = 0;
     QString pt = pr.probeType;
 
@@ -203,6 +211,32 @@ void MainWindow::displayAllMeas()
         if (dval > -1021 && dval < 1021) ui->valueLabel->setText(QString::number(dval, 'f', 1 ) + " mV");
     }
     pf->realtimeUSBSlot(dval);
+
+    if (isLogging) {
+        //QString line;
+
+        QDateTime dt = QDateTime::currentDateTime();
+        int32_t unixTime = dt.toSecsSinceEpoch();
+        QString dateStr = dt.toString("yyyy-MM-dd");
+        QString timeStr = dt.toString("hh:mm:ss");
+
+        //line.sprintf("%10i, %s, %s, %5.2lf, %5.2lf",
+        //             unixTime, dateStr, timeStr, dval);
+
+
+
+        QString line = QString("%1, %2, %3, %4")
+                .arg(unixTime)
+                .arg(dateStr)
+                .arg(timeStr)
+                .arg(dval);
+
+        logf->write(line);
+        if (!commentLine.isEmpty()) {
+            logf-> write(commentLine);
+            commentLine.clear();
+        }
+    }
 }
 
 void MainWindow::readAtlasUSBData2()
@@ -229,7 +263,7 @@ void MainWindow::readAtlasUSBData2()
         else if ( response.contains("*RE") ) ui->statusBar->showMessage("Boot up Completed");
         else if ( response.contains("*SL") ) ui->statusBar->showMessage("Device Asleep");
         else if ( response.contains("*WA") ) ui->statusBar->showMessage("Device Woken Up");
-        else pH1Frame->stamp->parseAtlasUSB(response);
+        else ezof->stamp->parseAtlasUSB(response);
     }
 }
 
@@ -249,7 +283,7 @@ void MainWindow::on_action_Help_Tentacle_triggered()
 
 void MainWindow::on_contCB_clicked(bool checked)
 {
-    pH1Frame->on_contCB_clicked(checked);
+    ezof->on_contCB_clicked(checked);
 }
 
 void MainWindow::on_actionScreenshot_triggered()
@@ -268,3 +302,31 @@ void MainWindow::on_actionAbout_Qt_triggered()
     qApp->aboutQt();
 }
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    commentLine = ui->leComment->text();
+    commentLine.prepend("# ");
+}
+
+void MainWindow::on_btnLogStart_clicked()
+{
+    QDateTime datetime(QDateTime::currentDateTime());
+    QString dtString = datetime.toString("yyyyMMdd_hhmmss");
+    logf->setLogFile("C:/Data/Atlas_" + dtString + ".log");
+
+    logf->on_btnStart_clicked();
+    isLogging = true;
+
+    ui->btnLogStart->setEnabled(false);
+    ui->btnLogStop->setEnabled(true);
+}
+
+void MainWindow::on_btnLogStop_clicked()
+{
+    isLogging = false;
+    logf->on_btnStop_clicked();
+
+    ui->btnLogStart->setEnabled(true);
+    ui->btnLogStop->setEnabled(false);
+}

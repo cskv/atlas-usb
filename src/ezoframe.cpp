@@ -37,7 +37,8 @@ EZOFrame::EZOFrame(QWidget *parent) :
 
     stampTimer = new QTimer;
 
-    connect(stampTimer, SIGNAL(timeout()), this, SLOT(on_btnReadMeas_clicked()));
+    connect(stampTimer, SIGNAL(timeout()),
+            this, SLOT(on_btnReadMeas_clicked()));
 
     connect( stamp, SIGNAL(infoRead()),
              this, SLOT(displayInfo()) );

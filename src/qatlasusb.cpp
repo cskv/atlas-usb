@@ -65,7 +65,6 @@ PLOCK,x PLOCK,? Locks UART and baud rate/I2C and I2C Address (p.32 ORP-EZO)
  *
  * Atlas function: L,?
  * \return cmd for EZO function L,?
- * \code command = readLED(); \endcode
  * EZO response: ?L,x<CR> with x is 0 (LED off) or 1 (LED on)
  */
 QByteArray QAtlasUSB::readLED()
@@ -94,7 +93,7 @@ QByteArray QAtlasUSB::writeLED(bool state)
 }
 //---------------------------------------------------
 /*!
- * \brief Get the mode on the Atlas Scientific EZO stamp.
+ * \brief Get the (continuous) mode on the Atlas Scientific EZO stamp.
  *
  * Atlas function: C,?
  * \return cmd for EZO function C,?
@@ -137,8 +136,8 @@ QByteArray QAtlasUSB::writeCont(bool state)
  */
 QByteArray QAtlasUSB::readpHORP()
 {
-    QByteArray cmd = "R\r";
-    qDebug() << cmd;
+    QByteArray cmd = "R\r";  // Capital R to comply with manual
+    //qDebug() << cmd;
     lastEZOCmd = cmd;
     return cmd;
 }
@@ -360,7 +359,7 @@ QByteArray QAtlasUSB::changeSerial(int baudrate)
 }
 //---------------------------------------
 /**
- * @brief Change baudrate in UART mode.
+ * @brief Reset to factory settings (UART mode, 9600 baud, green led).
  *
  * Atlas function: Factory
  * Response: issue STATUS query after this command
@@ -381,7 +380,7 @@ QByteArray QAtlasUSB::factoryReset()
 void QAtlasUSB::parseAtlasUSB(QByteArray atlasdata)
 {
     QByteArray t;
-    qDebug() << atlasdata;
+    //qDebug() << atlasdata;
 
     if ( atlasdata.startsWith("?L,") ) {
         t = atlasdata.mid(3,1);

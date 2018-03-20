@@ -37,12 +37,12 @@
 #include "atlasdialog.h"
 #include "qatlasusb.h"
 
-#include "ledindicator.h"
 #include "ezoframe.h"
 #include "plotframe.h"
-#include "qcustomplot.h"
+#include "thirdparty/qcustomplot.h"
 #include "about.h"
 #include "serialdialog.h"
+#include "loggingframe.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -51,8 +51,6 @@ class MainWindow;
 }
 
 QT_END_NAMESPACE
-
-class SettingsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -70,11 +68,13 @@ private slots:
     void writeData(const QByteArray &data);
     void readAtlasUSBData2();
 
+    void setupEZOFrames();
+
     void on_action_Help_Tentacle_triggered();
     void displayAllMeas();
     void on_contCB_clicked(bool checked);
     void on_actionScreenshot_triggered();
-    void setupEZOFrames();
+
     void on_actionAbout_AtlasTerminal_triggered();
     void on_actionAbout_Qt_triggered();
     void on_actionConnect_triggered();
@@ -83,26 +83,33 @@ private slots:
     void loadSettings();
     void saveSettings();
 
+    void on_pushButton_clicked();
+
+    void on_btnLogStart_clicked();
+
+    void on_btnLogStop_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     QString m_sSettingsFile;
-
-    LedIndicator* ledStateLed;
 
     SerialDialog* sd;
     QSerialPort *serial;
     QByteArray lastCmd;
     QByteArray serialbuffer;
 
-    EZOFrame* pH1Frame;
+    EZOFrame* ezof;
     PlotFrame* pf;
+    LoggingFrame* logf;
+    QString commentLine;
 
     //QTimer* delayTimer;
 
     AtlasDialog* ad;
 
     QCPPlotTitle* plotTitle;
+    bool isLogging = false;
 };
 
 #endif // MAINWINDOW_H
