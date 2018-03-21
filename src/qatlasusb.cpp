@@ -328,6 +328,21 @@ QByteArray QAtlasUSB::readStatus()
 }
 //-------------------------------------------------
 /**
+ * @brief QAtlasUSB::changeI2C
+ * @param newAddr
+ * @return
+ */
+QByteArray QAtlasUSB::changeI2C(qint8 newAddr)
+//Atlas function: I2C,char
+{
+    QByteArray cmd = "I2C,";
+    cmd.append(QByteArray::number(newAddr));
+    cmd.append("\r");
+    lastEZOCmd = cmd;
+    return cmd;
+}
+//-------------------------------------------------
+/**
  * @brief Put the EZO stamp to sleep (low power mode).
  *
  * Atlas function: SLEEP

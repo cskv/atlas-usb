@@ -60,7 +60,6 @@ signals:
 
 private slots:
     void on_btnGetTemp_clicked();
-
     void on_btnSetTemp_clicked();
 
     void on_btnCal_clicked();

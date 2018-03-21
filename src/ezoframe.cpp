@@ -36,7 +36,6 @@ EZOFrame::EZOFrame(QWidget *parent) :
     ui->setupUi(this);
 
     stampTimer = new QTimer;
-
     connect(stampTimer, SIGNAL(timeout()),
             this, SLOT(on_btnReadMeas_clicked()));
 
@@ -58,11 +57,6 @@ void EZOFrame::updateInfo()
     ui->btnStatus->click();
     ui->btnGetTemp->click();
     ui->btnCal->click();
-}
-
-void EZOFrame::displayBaudrate()
-{
-    ui->leBaud->setText(QString::number(stamp->getEZOProps().baud));
 }
 
 void EZOFrame::displayInfo()
@@ -114,6 +108,11 @@ void EZOFrame::displayMeas()
     }
 }
 
+void EZOFrame::displayBaudrate()
+{
+    ui->leBaud->setText(QString::number(stamp->getEZOProps().baud));
+}
+
 void EZOFrame::on_btnGetTemp_clicked()
 {
     lastCmd = stamp->readTemp();
@@ -152,8 +151,9 @@ void EZOFrame::on_btnCal_clicked()
 
 void EZOFrame::on_btnCalClear_clicked()
 {
-    if (stamp->getEZOProps().probeType == "pH") lastCmd = stamp->dopHCal(0);
-    else if (stamp->getEZOProps().probeType == "ORP") lastCmd = stamp->doORPCal(200.0);
+    QAtlasUSB::EZOProperties pr = stamp->getEZOProps();
+    if (pr.probeType == "pH") lastCmd = stamp->dopHCal(0);
+    else if (pr.probeType == "ORP") lastCmd = stamp->doORPCal(200.0);
     emit cmdAvailable(lastCmd);
     //serial->write(lastCmd);
     QTimer::singleShot(2000, this, SLOT(on_btnCal_clicked()));
@@ -216,12 +216,6 @@ void EZOFrame::on_ledCheckBox_clicked(bool checked)
     QTimer::singleShot(300, this, SLOT(on_btnLED_clicked()));
 }
 
-void EZOFrame::on_contCB_clicked(bool checked)
-{
-    lastCmd = stamp->writeCont(checked);
-    emit cmdAvailable(lastCmd);
-}
-
 void EZOFrame::on_btnSleep_clicked()
 {
     lastCmd = stamp->sleep();
@@ -229,36 +223,105 @@ void EZOFrame::on_btnSleep_clicked()
     //serial->write(lastCmd);
 }
 
+/**
+ * @brief EZOFrame::on_cbAuto_clicked
+ * @param checked
+ *
+ * start stampTimer
+ * timeout SLOT sends "R\n" command to stamp
+ * with regular intervals ( >= 1000 ms due to conversion time
+ * this SLOT works in both SERIAL and I2C mode
+ * note: SERIAL protocol is asynchronous
+ */
 void EZOFrame::on_cbAuto_clicked(bool checked)
 {
     if (checked) stampTimer->start(1000);
     else stampTimer->stop();
 }
 
-void EZOFrame::on_btnI2CAddr_clicked()
-{
-    //lastCmd = stamp->changeI2C(ui->leI2CAddress->text().toInt());
-    //emit cmdAvailable(lastCmd);
-}
-
-void EZOFrame::on_respCB_clicked(bool checked)
-{
-    lastCmd = stamp->writeResponse(checked);
-    emit cmdAvailable(lastCmd);
-}
-
+/**
+ * @brief EZOFrame::on_btnBaud_clicked
+ *
+ * changes baudrate for stamp in SERIAL mode
+ * changes control from I2C to SERIAL mode in I2C mode
+ */
 void EZOFrame::on_btnBaud_clicked()
 {
     lastCmd = stamp->changeSerial(ui->leBaud->text().toInt());
     emit cmdAvailable(lastCmd);
 }
 
+/**
+ * @brief EZOFrame::on_btnI2CAddr_clicked
+ *
+ * in I2C mode
+ * this SLOT changes the I2C address of the stamp
+ * if working with a Tentacle (Mini) shield for Arduino
+ * - this application with its serial port object must be closed
+ * - the I2C address must be MANUALLY changed in the Arduino sketch
+ * - the sketch must be compiled and uploaded to the Arduino
+ * - this application must be restarted
+ *
+ * if working with a Tentacle T3 shield for RPi
+ *                 or EZO Carrier board (non USB)
+ * - this SLOT can be useful for changing the I2C address programmatically
+ */
+void EZOFrame::on_btnI2CAddr_clicked()
+{
+    lastCmd = stamp->changeI2C(ui->leI2CAddress->text().toInt());
+    emit cmdAvailable(lastCmd);
+}
+
+//-------------------------------------------------------------------
+// SERIAL only commands
+//-------------------------------------------------------------------
+/**
+ * @brief EZOFrame::on_contCB_clicked
+ * @param checked
+ *
+ * sends "C,0\n" or "C,1\n" to stamp
+ * stamp starts sending data continuously
+ * after each conversion (1000 ms)
+ * only works in SERIAL mode
+ */
+void EZOFrame::on_contCB_clicked(bool checked)
+{
+    lastCmd = stamp->writeCont(checked);
+    emit cmdAvailable(lastCmd);
+}
+
+/**
+ * @brief EZOFrame::on_respCB_clicked
+ * @param checked
+ *
+ * sends "RESPONSE,0" or "RESPONSE,1"command to stamp
+ * to disable or enable RESPONSE code generation
+ * works only in SERIAL mode
+ */
+void EZOFrame::on_respCB_clicked(bool checked)
+{
+    lastCmd = stamp->writeResponse(checked);
+    emit cmdAvailable(lastCmd);
+}
+
+/**
+ * @brief EZOFrame::on_btnSetName_clicked
+ *
+ * sets stamp name with "NAME,xxx"command
+ * only works in SERIAL mode
+ */
 void EZOFrame::on_btnSetName_clicked()
 {
     lastCmd = stamp->writeName(ui->leName->text());
     emit cmdAvailable(lastCmd);
 }
 
+/**
+ * @brief EZOFrame::on_btnGetName_clicked
+ *
+ * gets stamp name with "NAME,?"command
+ * only works in SERIAL mode
+ */
 void EZOFrame::on_btnGetName_clicked()
 {
     lastCmd = stamp->readName();

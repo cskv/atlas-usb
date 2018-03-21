@@ -68,7 +68,8 @@ struct EZOProperties {
 // setters
     void setEZOProps(const EZOProperties &value);
     void setBaud(const int &value);
-    void setAsSerial(const bool &value);
+    void setAsSerial(const bool &value);    
+    QByteArray changeI2C(qint8 newAddr);
 
 public slots:
 // Atlas Scientific commands
