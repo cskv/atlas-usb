@@ -90,7 +90,7 @@ void LoggingFrame::on_btnStart_clicked()
         logStream.setCodec("UTF-8");
 
         // Write header line to log file:
-        logStream << "# unixTime, yyyy-MM-dd, hh:mm:ss, pH, pH" << endl;
+        logStream << "# unixTime, yyyy-MM-dd, hh:mm:ss, pH" << endl;
     }
 }
 

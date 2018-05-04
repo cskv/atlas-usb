@@ -35,6 +35,8 @@ PlotFrame::PlotFrame(QWidget *parent) :
 {
     ui->setupUi(this);
     dataTimer = new QTimer(this);
+    xSpan = ui->sbSpan->value();
+
     setupPlot3();
 }
 
@@ -145,12 +147,16 @@ void PlotFrame::setupPlot3()
 // configure x-axis
     ui->customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
     ui->customPlot->xAxis->setDateTimeFormat("hh:mm:ss");
-    ui->customPlot->xAxis->setAutoTickStep(false);
-    //ui->customPlot->xAxis->setTickStep(2);
-    ui->customPlot->xAxis->setTickStep(30);
+
+    double initialKey = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    ui->customPlot->xAxis->setRange(initialKey+0.02*xSpan, xSpan, Qt::AlignRight);
+
+    ui->customPlot->xAxis->setAutoTickStep(true);
+    //ui->customPlot->xAxis->setAutoTickStep(false);
+    //ui->customPlot->xAxis->setTickStep(30);
 
 // configure y-axis
-    ui->customPlot->yAxis->setRange(0, 14);
+    ui->customPlot->yAxis->setRange(yMin, yMax);
 
 // complete box around plot and
 // make left and bottom axes transfer their ranges to right and top axes:
@@ -249,16 +255,27 @@ void PlotFrame::realtimeUSBSlot(double value)
     ui->customPlot->graph(2)->addData(key, value);
 
 // remove data of lines that's outside visible range:
-    ui->customPlot->graph(0)->removeDataBefore(key-120);
+    ui->customPlot->graph(0)->removeDataBefore(key-xSpan);
 
 // rescale value (vertical) axis to fit the current data:
-    ui->customPlot->yAxis->setRange(-1000, 1000);
+    //ui->customPlot->yAxis->setRange(-1000, 1000);
 
     //ui->customPlot->graph(0)->rescaleValueAxis();
     //ui->customPlot->graph(1)->rescaleValueAxis(true);
 
-// make key axis range scroll with the data (at a constant range size of 120):
-    ui->customPlot->xAxis->setRange(key+2, 120, Qt::AlignRight);
+// make key axis range scroll with the data (at a constant range size of xSpan):
+    ui->customPlot->xAxis->setRange(key+0.02*xSpan, xSpan, Qt::AlignRight);
 
     ui->customPlot->replot();
+}
+
+void PlotFrame::on_sbSpan_valueChanged(int arg1)
+{
+    xSpan = double(arg1);
+}
+
+void PlotFrame::setYMinMax(double valMin, double valMax)
+{
+    yMin = valMin;
+    yMax = valMax;
 }

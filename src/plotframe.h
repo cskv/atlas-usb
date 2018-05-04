@@ -45,6 +45,8 @@ public:
     explicit PlotFrame(QWidget *parent = 0);
     ~PlotFrame();
 
+    void setYMinMax(double valMin, double valMax);
+
 public slots:
     void realtimeTentacleSlot(double value0);
     void realtimeUSBSlot(double value);
@@ -56,11 +58,16 @@ private slots:
     void realtimeDataSlot();
 
 
+    void on_sbSpan_valueChanged(int arg1);
+
 private:
     Ui::PlotFrame *ui;
 
     QCPPlotTitle* plotTitle;
     QTimer* dataTimer;
+    double xSpan = 1;
+    double yMin = 0;
+    double yMax = 14;
 };
 
 #endif // PLOTFRAME_H
