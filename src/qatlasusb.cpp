@@ -202,8 +202,8 @@ QByteArray QAtlasUSB::dopHCal(int taskid)
     switch (taskid) {
             case 0 : cmd += "clear\r";
             case 1 : cmd += "mid,7.00\r";
-            case 2 : cmd += "low,4.00\r";
-            case 3 : cmd += "high,10.00\r";
+            case 2 : cmd += "low,4.01\r";
+            case 3 : cmd += "high,10.01\r";
     }
     lastEZOCmd = cmd;
     return cmd;
